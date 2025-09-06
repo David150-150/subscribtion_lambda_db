@@ -1,10 +1,27 @@
- ## API Documentation
-
+## Lambda Subscription FastAPI
 
 [![API Docs](https://img.shields.io/badge/API-Docs-blue?style=flat-square)](https://gitdocify.com/readme/subscribtion_lambda_db)
 
-## API Documentation
+## Overview
 
-You can explore the full API documentation for this project using [GitDocify](https://gitdocify.com/readme/subscribtion_lambda_db).
+Lambda Subscription is a backend API built with **FastAPI** that handles:
 
-Click the link above to view all endpoints, request/response examples, and schemas.
+- Authentication
+- Customers
+- Products
+- Subscriptions
+- Scheduling
+- Transactions (including transaction details and failures)
+- Lambda simulation endpoints
+
+It uses **MySQL** as the database, **SQLAlchemy** for ORM, and **APScheduler** for scheduled tasks.
+
+## Features
+
+- JWT-based authentication
+- Full CRUD for customers, products, subscriptions, and transactions
+- Automatic and manual Lambda simulation endpoints
+- Swagger UI documentation
+- Background scheduler for automated tasks
+
+
