@@ -1,0 +1,39 @@
+lambda_db/
+├── app/
+│   ├── __init__.py
+│   ├── main.py                   # FastAPI entrypoint
+│   ├── db.py                     # SQLAlchemy engine, session, Base
+│   ├── settings.py               # Environment variables & config
+│   ├── models/                   # SQLAlchemy models
+│   │   ├── __init__.py
+│   │   └── ...                   # individual model files
+│   ├── schemas/                  # Pydantic schemas
+│   │   ├── __init__.py
+│   │   └── ...
+│   ├── crud/                     # CRUD operations
+│   │   ├── __init__.py
+│   │   └── ...
+│   ├── routers/                  # FastAPI routers / endpoints
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── customer.py
+│   │   ├── product.py
+│   │   ├── transaction.py
+│   │   ├── transaction_details.py
+│   │   ├── transaction_failure.py
+│   │   ├── schedule.py
+│   │   └── subscription.py
+│   ├── utils/                    # Utility functions
+│   │   ├── __init__.py
+│   │   └── lambda_func.py
+│   └── test/                     # Test cases
+│       ├── __init__.py
+│       └── ...
+│
+├── Dockerfile
+├── docker-compose.dev.yml
+├── docker-compose.prod.yml
+├── requirements.txt
+├── .env
+├── README.md
+└── project_srtucture.txt

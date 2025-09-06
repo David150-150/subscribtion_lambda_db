@@ -1,0 +1,63 @@
+# version: "3.9"
+
+# services:
+#   fastapi:
+#     build: .
+#     container_name: lambda_api_prod
+#     ports:
+#       - "8000:8000"
+#     depends_on:
+#       - db
+#     environment:
+#       - DB_HOST=db
+#       - DB_PORT=3306
+#       - DB_USER=root
+#       - DB_PASSWORD=secret
+#       - DB_NAME=lambda_db
+#     restart: always
+
+#   db:
+#     image: mysql:8.0
+#     container_name: lambda_mysql_prod
+#     restart: always
+#     environment:
+#       MYSQL_ROOT_PASSWORD: secret
+#       MYSQL_DATABASE: lambda_db
+#     ports:
+#       - "3307:3306"
+#     volumes:
+#       - db_data_prod:/var/lib/mysql
+
+# volumes:
+#   db_data_prod:
+
+
+version: "3.9"
+
+services:
+  fastapi:
+    build: .
+    container_name: lambda_db_prod
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    restart: always
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+  db:
+    image: mysql:8.0
+    container_name: lambda_mysql_prod
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: SubscribDB 
+    ports:
+      - "3308:3306"   # different from dev to avoid clash
+    volumes:
+      - db_data_prod:/var/lib/mysql
+
+volumes:
+  db_data_prod:
