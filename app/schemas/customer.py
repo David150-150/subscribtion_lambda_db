@@ -1,9 +1,12 @@
+# flake8: noqa: F401
+
+from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
-from datetime import datetime
 
-#---------------CREATED CUSTOMER SCHEMA----------#
+# ---------------CREATED CUSTOMER SCHEMA----------#
+
 
 class CustomerBase(BaseModel):
     first_name: str
@@ -11,7 +14,7 @@ class CustomerBase(BaseModel):
     last_name: str
     email: EmailStr
     telephone: str
-    #password: str
+    # password: str
 
 
 class CustomerCreate(CustomerBase):

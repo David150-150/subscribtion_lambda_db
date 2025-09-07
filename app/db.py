@@ -24,11 +24,10 @@
 #         db.close()
 
 
-
-
 # app/db.py
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
 from app.settings import settings
 
 # Database URL from settings.py (.env)
@@ -42,6 +41,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base class for models
 Base = declarative_base()
+
 
 # Dependency for FastAPI routes
 def get_db():

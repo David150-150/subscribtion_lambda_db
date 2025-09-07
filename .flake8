@@ -1,0 +1,16 @@
+[flake8]
+max-line-length = 200
+extend-ignore = E203, W503
+exclude =
+    lambda_subscribtion,        # your virtual environment
+    app/__init__.py,            # ignore this init
+    app/schemas/__init__.py,    # ignore schema init
+    app/crud/__init__.py,       # ignore crud init
+    app/models/__init__.py,      # ignore models init
+    app/test/*                   # ignore all test files
+
+
+per-file-ignores =
+    app/create_tables.py: F401, F841, E265
+
+

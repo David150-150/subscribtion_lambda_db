@@ -1,32 +1,30 @@
+# flake8: noqa: F401,F841,E501
+
 import pytest
+
 
 # CREATE
 def test_create_transaction(client):
     # Ensure subscription exists
-    subscription = client.post("/subscription/", json={
-        "customer_id": 1,
-        "product_id": 1,
-        "status": "active"
-    })
+    subscription = client.post(
+        "/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"}
+    )
     sub_id = subscription.json()["subscription_id"]
 
     # Create transaction
-    response = client.post("/transaction/", json={
-        "subscription_id": 1
-    })
+    response = client.post("/transaction/", json={"subscription_id": 1})
     assert response.status_code == 201
     data = response.json()
     assert data["subscription_id"] == 1
     assert "transaction_id" in data
     assert "created_at" in data
 
+
 # GET BY ID
 def test_get_transaction(client):
-    sub = client.post("/subscription/", json={
-        "customer_id": 1,
-        "product_id": 1,
-        "status": "active"
-    })
+    sub = client.post(
+        "/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"}
+    )
     sub_id = sub.json()["subscription_id"]
 
     txn = client.post("/transaction/", json={"subscription_id": sub_id})
@@ -38,13 +36,12 @@ def test_get_transaction(client):
     assert data["transaction_id"] == 1
     assert data["subscription_id"] == 1
 
+
 # GET ALL
 def test_get_transactions(client):
-    sub = client.post("/subscription/", json={
-        "customer_id": 1,
-        "product_id": 1,
-        "status": "active"
-    })
+    sub = client.post(
+        "/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"}
+    )
     sub_id = sub.json()["subscription_id"]
 
     client.post("/transaction/", json={"subscription_id": sub_id})
@@ -60,13 +57,12 @@ def test_get_transactions(client):
         assert "subscription_id" in txn
         assert "created_at" in txn
 
+
 # DELETE
 def test_delete_transaction(client):
-    sub = client.post("/subscription/", json={
-        "customer_id": 1,
-        "product_id": 1,
-        "status": "active"
-    })
+    sub = client.post(
+        "/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"}
+    )
     sub_id = sub.json()["subscription_id"]
 
     txn = client.post("/transaction/", json={"subscription_id": sub_id})

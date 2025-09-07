@@ -1,7 +1,9 @@
-from pydantic import BaseModel
 from datetime import datetime
 
-#---------------CREATED TRANSACTION SCHEMA----------#
+from pydantic import BaseModel
+
+# ---------------CREATED TRANSACTION SCHEMA----------#
+
 
 class TransactionBase(BaseModel):
     subscription_id: int
@@ -9,7 +11,6 @@ class TransactionBase(BaseModel):
 
 class TransactionCreate(TransactionBase):
     pass
-
 
 
 class TransactionOut(TransactionBase):

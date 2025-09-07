@@ -1,4 +1,11 @@
 -r requirements.txt
-pytest
-pytest-cov
+black
+isort
 flake8
+pytest
+pre-commit
+
+
+
+# pip install pre-commit
+# pre-commit install

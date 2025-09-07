@@ -1,8 +1,10 @@
-from pydantic import BaseModel
-from datetime import datetime, date
-from typing import Optional, Literal
+from datetime import date, datetime
+from typing import Literal, Optional
 
-#---------------CREATED SCHEDULE SCHEMA----------#
+from pydantic import BaseModel
+
+
+# ---------------CREATED SCHEDULE SCHEMA----------#
 class ScheduleBase(BaseModel):
     subscription_id: int
     task_name: str
@@ -15,6 +17,7 @@ class ScheduleCreate(ScheduleBase):
 
 class ScheduleUpdate(BaseModel):
     status: Literal["pending", "complete", "cancelled"] = None
+
 
 class ScheduleOut(ScheduleBase):
     schedule_id: int

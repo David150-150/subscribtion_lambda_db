@@ -1,9 +1,10 @@
-
-from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
-#---------------CREATED PRODUCT SCHEMA----------#
+from pydantic import BaseModel
+
+# ---------------CREATED PRODUCT SCHEMA----------#
+
 
 class ProductBase(BaseModel):
     name: str
@@ -19,9 +20,6 @@ class ProductUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     price: Optional[float] = None
-
-
-
 
 
 class ProductOut(ProductBase):

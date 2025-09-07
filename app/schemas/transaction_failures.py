@@ -1,9 +1,10 @@
-from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
+from pydantic import BaseModel
 
-#---------------CREATED TRANSACTION FAILURE SCHEMA----------#
+# ---------------CREATED TRANSACTION FAILURE SCHEMA----------#
+
 
 class Transaction_Failure_Base(BaseModel):
     transaction_id: int

@@ -1,8 +1,13 @@
+# flake8: noqa: F401
+
 # app/models.py
-from sqlalchemy import Column, Integer, String, DateTime
+from datetime import datetime
+
+from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.sql import func
+
 from app.db import Base
-from datetime import datetime  
+
 
 class Customer(Base):
     __tablename__ = "customer"
@@ -14,5 +19,3 @@ class Customer(Base):
     telephone = Column(String(20), nullable=False)
     hashed_password = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-
-

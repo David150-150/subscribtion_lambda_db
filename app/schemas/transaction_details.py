@@ -1,7 +1,9 @@
-from pydantic import BaseModel
-from typing import Optional, Literal
+from typing import Literal, Optional
 
-#---------------CREATED TRANSACTION DETAIL SCHEMA----------#
+from pydantic import BaseModel
+
+
+# ---------------CREATED TRANSACTION DETAIL SCHEMA----------#
 class Transaction_Detail_Base(BaseModel):
     transaction_id: int
     action_task: Optional[str]

@@ -1,37 +1,31 @@
-name: CI Pipeline
+name: CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
-  build-and-test:
+  lint-test:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      # Step 2: Set up latest Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
+          python-version: "3.11"
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
-          pip install flake8 pytest pytest-cov
 
-      # Step 4: Lint code
-      - name: Lint with flake8
-        run: flake8 app --max-line-length=88
+      - name: Check formatting with Black
+        run: black --check app
 
-      # Step 5: Run tests with coverage
-      - name: Run tests with pytest
-        run: pytest app/test --cov=app --cov-report=term-missing -v
+      - name: Check imports with isort
+        run: isort --check-only app
+
+      - name: Lint with Flake8
+        run: flake8 app
+
+      - name: Run tests
+        run: pytest

@@ -1,17 +1,23 @@
-#-------------Import the Required Libraries-----------#
+# -------------Import the Required Libraries-----------#
 import os
-from dotenv import load_dotenv
-import mysql.connector
 
-#-------------Load Env Variables---------#
+import mysql.connector
+from dotenv import load_dotenv
+
+# -------------Load Env Variables---------#
 load_dotenv()
 
-#-------------Reusable Lambda-like Function-------#
+
+# -------------Reusable Lambda-like Function-------#
 def lambda_handler(event=None, context=None):
     tables_to_test = [
-        "customer", "product", "subscription",
-        "transaction", "transaction_details",
-        "transaction_failures", "schedule"
+        "customer",
+        "product",
+        "subscription",
+        "transaction",
+        "transaction_details",
+        "transaction_failures",
+        "schedule",
     ]
 
     results = {}
@@ -22,7 +28,7 @@ def lambda_handler(event=None, context=None):
             port=int(os.getenv("DB_PORT")),
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME")
+            database=os.getenv("DB_NAME"),
         )
         cursor = connection.cursor(dictionary=True)
 
@@ -33,32 +39,26 @@ def lambda_handler(event=None, context=None):
             except mysql.connector.Error as e:
                 results[table] = f"Query error: {str(e)}"
 
-        return {
-            "statusCode": 200,
-            "body": results
-        }
+        return {"statusCode": 200, "body": results}
 
     except mysql.connector.Error as err:
-        return {
-            "statusCode": 500,
-            "body": f"Database error: {str(err)}"
-        }
+        return {"statusCode": 500, "body": f"Database error: {str(err)}"}
 
     finally:
-        if 'cursor' in locals():
+        if "cursor" in locals():
             cursor.close()
-        if 'connection' in locals() and connection.is_connected():
+        if "connection" in locals() and connection.is_connected():
             connection.close()
 
-#-------------Optional Test Function Locally----------#
+
+# -------------Optional Test Function Locally----------#
 if __name__ == "__main__":
     from pprint import pprint
+
     pprint(lambda_handler({}, {}))
 
-#-------------Wrapper for FastAPI Endpoint------------#
+
+# -------------Wrapper for FastAPI Endpoint------------#
 def get_summary_data():
     result = lambda_handler({}, {})
-    return {
-        "status": "success",
-        "data": result["body"]
-    }
+    return {"status": "success", "data": result["body"]}

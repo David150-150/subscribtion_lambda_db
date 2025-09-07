@@ -1,14 +1,17 @@
-from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional, Literal
+from typing import Literal, Optional
 
-#---------------CREATED SUBSCRIPTION SCHEMA----------#
+from pydantic import BaseModel, Field
+
+
+# ---------------CREATED SUBSCRIPTION SCHEMA----------#
 class SubscriptionBase(BaseModel):
-    status: Optional[Literal["active", "inactive", "cancelled"]] = Field(default = "active",
-            description = "The current status of your subscription"                   )
+    status: Optional[Literal["active", "inactive", "cancelled"]] = Field(
+        default="active", description="The current status of your subscription"
+    )
     customer_id: int
     product_id: int
-    
+
 
 class SubscriptionCreate(SubscriptionBase):
     pass
@@ -16,7 +19,6 @@ class SubscriptionCreate(SubscriptionBase):
 
 class SubscriptionUpdate(BaseModel):
     status: Optional[Literal["active", "inactive", "cancelled"]] = None
-
 
 
 class SubscriptionOut(SubscriptionBase):

@@ -1,12 +1,15 @@
-from sqlalchemy.orm import Session
-from app import  schemas
-from app.schemas.product import ProductBase
-from app. models import Product
+# flake8: noqa: F401
+
 from typing import List, Optional
 
+from sqlalchemy.orm import Session
+
+from app import schemas
+from app.models import Product
+from app.schemas.product import ProductBase
 
 
-#-----------------CREATE PRODUCT------------#
+# -----------------CREATE PRODUCT------------#
 def create_product(db: Session, product: schemas.ProductBase) -> Product:
     new_product = Product(**product.dict())
     db.add(new_product)
@@ -14,21 +17,26 @@ def create_product(db: Session, product: schemas.ProductBase) -> Product:
     db.refresh(new_product)
     return new_product
 
-#-----------------GET ALL PRODUCT------------#
-def get_products(db: Session ) -> List[Product]:
+
+# -----------------GET ALL PRODUCT------------#
+def get_products(db: Session) -> List[Product]:
     return db.query(Product).all()
 
-#-----------------GET PRODUCT------------#
+
+# -----------------GET PRODUCT------------#
 def get_product(db: Session, product_id: int) -> Optional[Product]:
     return db.query(Product).filter(Product.product_id == product_id).first()
 
-#-----------------UPDATE PRODUCT------------#
-def update_product(db: Session, product_id: int, product_data: schemas.ProductCreate) -> Optional[Product]:
+
+# -----------------UPDATE PRODUCT------------#
+def update_product(
+    db: Session, product_id: int, product_data: schemas.ProductCreate
+) -> Optional[Product]:
     product = db.query(Product).filter(Product.product_id == product_id).first()
     if not product:
         return None
-    
-    for key, value in product_data.dict(exclude_unset = True).items():
+
+    for key, value in product_data.dict(exclude_unset=True).items():
         setattr(product, key, value)
 
     db.commit()
@@ -36,14 +44,12 @@ def update_product(db: Session, product_id: int, product_data: schemas.ProductCr
     return product
 
 
-
-#-----------------DELETE PRODUCT------------#
+# -----------------DELETE PRODUCT------------#
 def delete_product(db: Session, product_id: int) -> Optional[Product]:
     product = db.query(Product).filter(Product.product_id == product_id).first()
-   
-    if  product:
+
+    if product:
         db.delete(product)
         db.commit()
         return product
     return None
-

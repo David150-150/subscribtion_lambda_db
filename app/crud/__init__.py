@@ -1,7 +1,11 @@
-from . import customer
-from . import product
-from . import subscription
-from . import schedule
-from . import transaction
-from . import transaction_details
-from . import transaction_failures
+# flake8: noqa: F401
+
+from . import (
+    customer,
+    product,
+    schedule,
+    subscription,
+    transaction,
+    transaction_details,
+    transaction_failures,
+)

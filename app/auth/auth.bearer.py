@@ -1,6 +1,8 @@
-from fastapi import Request, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import HTTPException, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
 from app.auth.auth_handler import decode_access_token
+
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
