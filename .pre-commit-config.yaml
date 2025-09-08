@@ -3,14 +3,12 @@ repos:
     rev: 23.3.0
     hooks:
       - id: black
-        args: [--fast]
-        always_run: true
+        args: [app]
         stages: [pre-commit]
 
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
       - id: isort
-        args: ["--profile", "black"]
-        always_run: true
+        args: [app, "--profile", "black"]
         stages: [pre-commit]
