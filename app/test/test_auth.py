@@ -57,9 +57,7 @@ def test_login_invalid_password():
 
 
 def test_login_nonexistent_user():
-    response = client.post(
-        "/auth/login", data={"username": "rice@gmail.com", "password": "Ricepass000"}
-    )
+    response = client.post("/auth/login", data={"username": "rice@gmail.com", "password": "Ricepass000"})
 
     assert response.status_code == 401
     assert response.json()["detail"] == "Invalid credentials"

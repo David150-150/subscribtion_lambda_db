@@ -9,9 +9,7 @@ from app.models import Customer
 
 # -------------------- Create Customer -------------------- #
 def create_customer(db: Session, customer: schemas.CustomerCreate) -> Customer:
-    new_customer = models.Customer(
-        **customer.dict()
-    )  # Assume password is already hashed
+    new_customer = models.Customer(**customer.dict())  # Assume password is already hashed
     db.add(new_customer)
     db.commit()
     db.refresh(new_customer)
@@ -29,9 +27,7 @@ def get_customer(db: Session, customer_id: int) -> Optional[Customer]:
 
 
 # -------------------- Update Customer -------------------- #
-def update_customer(
-    db: Session, customer_id: int, customer_data: schemas.CustomerUpdate
-) -> Optional[Customer]:
+def update_customer(db: Session, customer_id: int, customer_data: schemas.CustomerUpdate) -> Optional[Customer]:
     customer = get_customer(db, customer_id)
     if not customer:
         return None

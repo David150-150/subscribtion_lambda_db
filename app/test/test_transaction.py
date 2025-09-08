@@ -6,9 +6,7 @@ import pytest
 # CREATE
 def test_create_transaction(client):
     # Ensure subscription exists
-    subscription = client.post(
-        "/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"}
-    )
+    subscription = client.post("/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"})
     sub_id = subscription.json()["subscription_id"]
 
     # Create transaction
@@ -22,9 +20,7 @@ def test_create_transaction(client):
 
 # GET BY ID
 def test_get_transaction(client):
-    sub = client.post(
-        "/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"}
-    )
+    sub = client.post("/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"})
     sub_id = sub.json()["subscription_id"]
 
     txn = client.post("/transaction/", json={"subscription_id": sub_id})
@@ -39,9 +35,7 @@ def test_get_transaction(client):
 
 # GET ALL
 def test_get_transactions(client):
-    sub = client.post(
-        "/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"}
-    )
+    sub = client.post("/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"})
     sub_id = sub.json()["subscription_id"]
 
     client.post("/transaction/", json={"subscription_id": sub_id})
@@ -60,9 +54,7 @@ def test_get_transactions(client):
 
 # DELETE
 def test_delete_transaction(client):
-    sub = client.post(
-        "/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"}
-    )
+    sub = client.post("/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"})
     sub_id = sub.json()["subscription_id"]
 
     txn = client.post("/transaction/", json={"subscription_id": sub_id})

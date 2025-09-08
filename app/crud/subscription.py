@@ -22,17 +22,11 @@ def get_subscriptions(db: Session) -> List[Subscription]:
 
 # -----------------GET SUBSCRIPTION------------#
 def get_subscription(db: Session, subscription_id: int) -> Optional[Subscription]:
-    return (
-        db.query(Subscription)
-        .filter(Subscription.subscription_id == subscription_id)
-        .first()
-    )
+    return db.query(Subscription).filter(Subscription.subscription_id == subscription_id).first()
 
 
 # -----------------UPDATE SUBSCRIPTION------------#
-def update_subscription(
-    db: Session, subscription_id: int, subscription_data: SubscriptionUpdate
-) -> Optional[Subscription]:
+def update_subscription(db: Session, subscription_id: int, subscription_data: SubscriptionUpdate) -> Optional[Subscription]:
     subscription = get_subscription(db, subscription_id)
     if not subscription:
         return None

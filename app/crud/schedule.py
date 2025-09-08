@@ -26,9 +26,7 @@ def get_schedule(db: Session, schedule_id: int) -> Optional[Schedule]:
 
 
 # -----------------UPDATE SCHEDULE------------#
-def update_schedule(
-    db: Session, schedule_id: int, schedule_data: ScheduleUpdate
-) -> Optional[Schedule]:
+def update_schedule(db: Session, schedule_id: int, schedule_data: ScheduleUpdate) -> Optional[Schedule]:
     schedule = get_schedule(db, schedule_id)
     if not schedule:
         return None

@@ -22,9 +22,7 @@ def test_create_transaction_failure(client):
 
 # GET BY ID
 def test_get_transaction_failure(client):
-    create = client.post(
-        "/transaction-failure/", json={"transaction_id": 1, "failure_reason": "Timeout"}
-    )
+    create = client.post("/transaction-failure/", json={"transaction_id": 1, "failure_reason": "Timeout"})
     failure_id = create.json()["transaction_failure_id"]
 
     response = client.get(f"/transaction-failure/{failure_id}")

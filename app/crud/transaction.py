@@ -22,11 +22,7 @@ def get_transactions(db: Session) -> List[Transaction]:
 
 # -----------------GET TRANSACTION------------#
 def get_transaction(db: Session, transaction_id: int) -> Optional[Transaction]:
-    return (
-        db.query(Transaction)
-        .filter(Transaction.transaction_id == transaction_id)
-        .first()
-    )
+    return db.query(Transaction).filter(Transaction.transaction_id == transaction_id).first()
 
 
 # def update_transaction(db: Session, transaction_id: int, transaction_data: TransactionUpdate) -> Optional[Transaction]:

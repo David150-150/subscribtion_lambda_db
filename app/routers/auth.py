@@ -22,9 +22,7 @@ def signup(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
 
 # # ------------------ Login ------------------ #
 @router.post("/login")
-def login(
-    email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)
-):
+def login(email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     user = auth_crud.authenticate_user(db, email, password)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")

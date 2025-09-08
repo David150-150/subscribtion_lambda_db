@@ -5,9 +5,7 @@ import pytest
 
 
 def test_create_customer(client):
-    response = client.post(
-        "/customer/", json={"name": "Ama Budu", "email": "Budu@gmail.com"}
-    )
+    response = client.post("/customer/", json={"name": "Ama Budu", "email": "Budu@gmail.com"})
 
     assert response.status_code == 200
     assert response.json()["name"] == "Ama Budu"
@@ -22,9 +20,7 @@ def test_get_customers(client):
 
 def test_get_customer(client):
     # First, create a customer
-    create = client.post(
-        "/customer/", json={"name": "Ama Buudu", "email": "Buudu@gmail.com"}
-    )
+    create = client.post("/customer/", json={"name": "Ama Buudu", "email": "Buudu@gmail.com"})
 
     customer_id = create.json()["customer_id"]
 
@@ -36,9 +32,7 @@ def test_get_customer(client):
 
 
 def test_update_customer(client):
-    create = client.post(
-        "/customer/", json={"name": "Ama Moom", "email": "Moom@gmail.com"}
-    )
+    create = client.post("/customer/", json={"name": "Ama Moom", "email": "Moom@gmail.com"})
 
     customer_id = create.json()["customer_id"]
     response = client.put(
@@ -54,9 +48,7 @@ def test_update_customer(client):
 
 
 def test_delete_customer(client):
-    create = client.post(
-        "/customer/", json={"name": "Kuku Bonsu", "email": "Bonsu@gmail.com"}
-    )
+    create = client.post("/customer/", json={"name": "Kuku Bonsu", "email": "Bonsu@gmail.com"})
 
     customer_id = create.json()["customer_id"]
 

@@ -24,9 +24,7 @@ def read_schedules(db: Session = Depends(get_db)):
 def read_schedule(schedule_id: int, db: Session = Depends(get_db)):
     schedule = crud.schedule.get_schedule(db, schedule_id)
     if not schedule:
-        raise HTTPException(
-            status_code=404, detail=f"The ID:{schedule_id}, does not exist"
-        )
+        raise HTTPException(status_code=404, detail=f"The ID:{schedule_id}, does not exist")
     return schedule
 
 
@@ -38,9 +36,7 @@ def update_schedule(
 ):
     schedule = crud.schedule.update_schedule(db, schedule_id, schedule_data)
     if not schedule:
-        raise HTTPException(
-            status_code=404, detail=f"The ID:{schedule_id}, does not exist"
-        )
+        raise HTTPException(status_code=404, detail=f"The ID:{schedule_id}, does not exist")
     return schedule
 
 
@@ -48,8 +44,6 @@ def update_schedule(
 def delete_schedule(schedule_id: int, db: Session = Depends(get_db)):
     schedule = crud.schedule.get_schedule(db, schedule_id)
     if not schedule:
-        raise HTTPException(
-            status_code=404, detail=f"The ID:{schedule_id}, does not exist"
-        )
+        raise HTTPException(status_code=404, detail=f"The ID:{schedule_id}, does not exist")
     crud.schedule.delete_schedule(db, schedule_id)
     return {"message": f"Schedule with ID {schedule_id} deleted successfully"}

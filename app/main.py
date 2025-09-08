@@ -78,9 +78,7 @@ def run_lambda_on_schedule():
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(
-    run_lambda_on_schedule, "interval", seconds=60
-)  # Run every 60 seconds
+scheduler.add_job(run_lambda_on_schedule, "interval", seconds=60)  # Run every 60 seconds
 # scheduler.add_job(run_lambda_on_schedule, "interval", minutes=30) # Run every 30 minutes
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())

@@ -11,9 +11,7 @@ router = APIRouter()
 
 # --------------CREATED ALL TRANSACTION ROUTES-------------#
 @router.post("/", response_model=schemas.TransactionOut)
-def create_transaction(
-    transaction: schemas.TransactionCreate, db: Session = Depends(get_db)
-):
+def create_transaction(transaction: schemas.TransactionCreate, db: Session = Depends(get_db)):
     return crud.transaction.create_transaction(db, transaction)
 
 

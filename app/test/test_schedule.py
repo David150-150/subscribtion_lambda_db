@@ -7,9 +7,7 @@ import pytest
 
 def test_create_schedule(client):
     # Create a customer
-    customer = client.post(
-        "/customer/", json={"name": "David", "email": "david@gmail.com.com"}
-    )
+    customer = client.post("/customer/", json={"name": "David", "email": "david@gmail.com.com"})
     customer_id = customer.json()["customer_id"]
 
     # Create a product
@@ -20,9 +18,7 @@ def test_create_schedule(client):
     product_id = product.json()["product_id"]
 
     # Create a subscription
-    subscription = client.post(
-        "/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"}
-    )
+    subscription = client.post("/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"})
     subscription_id = subscription.json()["subscription_id"]
 
     # Create a schedule

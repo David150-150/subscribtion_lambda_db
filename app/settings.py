@@ -17,9 +17,7 @@ class Settings:
     DB_NAME: str = os.getenv("DB_NAME")
 
     # Construct the full DATABASE_URL
-    DATABASE_URL: str = (
-        f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    )
+    DATABASE_URL: str = f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
     # ------------------- Auth Settings ------------------- #
     SECRET_KEY: str = os.getenv("SECRET_KEY")

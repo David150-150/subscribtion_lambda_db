@@ -6,9 +6,7 @@ from pydantic import BaseModel, Field
 
 # ---------------CREATED SUBSCRIPTION SCHEMA----------#
 class SubscriptionBase(BaseModel):
-    status: Optional[Literal["active", "inactive", "cancelled"]] = Field(
-        default="active", description="The current status of your subscription"
-    )
+    status: Optional[Literal["active", "inactive", "cancelled"]] = Field(default="active", description="The current status of your subscription")
     customer_id: int
     product_id: int
 

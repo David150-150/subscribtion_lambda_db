@@ -29,9 +29,7 @@ def read_product(product_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{product_id}", response_model=schemas.ProductOut)
-def update_product(
-    product_id: int, product_data: schemas.ProductCreate, db: Session = Depends(get_db)
-):
+def update_product(product_id: int, product_data: schemas.ProductCreate, db: Session = Depends(get_db)):
     product = crud.product.update_product(db, product_id, product_data)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")

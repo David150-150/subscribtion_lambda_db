@@ -3,12 +3,12 @@ repos:
     rev: 23.3.0
     hooks:
       - id: black
-        args: [app]
+        args: ["--line-length=200"]   # optional, just for formatting style
         stages: [pre-commit]
 
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
       - id: isort
-        args: [app, "--profile", "black"]
+        args: ["--profile", "black"]
         stages: [pre-commit]

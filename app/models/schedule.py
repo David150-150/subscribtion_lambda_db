@@ -10,9 +10,7 @@ class Schedule(Base):
 
     schedule_id = Column(Integer, primary_key=True, index=True)
     task_name = Column(String(50))
-    subscription_id = Column(
-        Integer, ForeignKey("subscription.subscription_id"), nullable=False
-    )
+    subscription_id = Column(Integer, ForeignKey("subscription.subscription_id"), nullable=False)
     schedule_date = Column(Date, default=func.current_date(), nullable=False)
     status = Column(
         Enum("pending", "complete", "cancelled", name="schedule_status_name"),
