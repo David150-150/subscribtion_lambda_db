@@ -8,7 +8,6 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,13 +23,12 @@ jobs:
           pip install -r requirements-dev.txt
           pip install pre-commit
 
-      - name: Run pre-commit (Black, isort, Flake8)
+      - name: Run pre-commit hooks (Black, isort, Flake8)
         run: pre-commit run --all-files
 
   test:
     runs-on: ubuntu-latest
     needs: lint
-
     services:
       mysql:
         image: mysql:8
