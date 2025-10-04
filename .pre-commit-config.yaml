@@ -3,7 +3,7 @@ repos:
     rev: 23.3.0
     hooks:
       - id: black
-        args: ["--line-length=200"]   # optional, just for formatting style
+        args: ["--line-length=200"]
         stages: [pre-commit]
 
   - repo: https://github.com/pycqa/isort
@@ -11,4 +11,10 @@ repos:
     hooks:
       - id: isort
         args: ["--profile", "black"]
+        stages: [pre-commit]
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
         stages: [pre-commit]
