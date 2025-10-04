@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]  # triggers on PRs to main branch
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,22 +23,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Run pre-commit hooks
-        run: pre-commit run --all-files --hook-stage manual || true
-
-      - name: Format with Black
-        run: black --check app
-
-      - name: Sort imports with isort
-        run: isort --check-only app
-
-      - name: Lint with Flake8
-        run: flake8 app
+      - name: Run pre-commit (auto-fix Black, isort, Flake8)
+        run: |
+          pre-commit install
+          pre-commit run --all-files
 
   test:
     runs-on: ubuntu-latest
     needs: lint
-
     services:
       mysql:
         image: mysql:8
