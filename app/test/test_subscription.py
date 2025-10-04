@@ -5,7 +5,10 @@ import pytest
 def test_create_subscription_success(client, create_customer, create_product):
     customer_id = create_customer()
     product_id = create_product()
-    response = client.post("/subscription/", json={"customer_id": customer_id, "product_id": product_id, "status": "active"})
+    response = client.post(
+        "/subscription/",
+        json={"customer_id": customer_id, "product_id": product_id, "status": "active"},
+    )
     assert response.status_code in [200, 201]
     data = response.json()
     assert data["customer_id"] == customer_id
@@ -16,7 +19,14 @@ def test_create_subscription_success(client, create_customer, create_product):
 def test_create_subscription_invalid_status(client, create_customer, create_product):
     customer_id = create_customer()
     product_id = create_product()
-    response = client.post("/subscription/", json={"customer_id": customer_id, "product_id": product_id, "status": "wrong_status"})
+    response = client.post(
+        "/subscription/",
+        json={
+            "customer_id": customer_id,
+            "product_id": product_id,
+            "status": "wrong_status",
+        },
+    )
     assert response.status_code == 422  # validation error
 
 

@@ -32,7 +32,11 @@ def read_transaction(transaction_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{transaction_id}", response_model=schemas.TransactionOut)
-def update_transaction(transaction_id: int, transaction_data: schemas.TransactionCreate, db: Session = Depends(get_db)):
+def update_transaction(
+    transaction_id: int,
+    transaction_data: schemas.TransactionCreate,
+    db: Session = Depends(get_db),
+):
     update = crud.transaction.update_transaction(db, transaction_id, transaction_data)
     if not update:
         raise HTTPException(

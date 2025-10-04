@@ -6,7 +6,17 @@ import pytest
 
 # ---------------- SIGNUP TESTS ---------------- #
 def test_signup_success(client):
-    response = client.post("/auth/signup", json={"first_name": "John", "middle_name": "A", "last_name": "Doe", "email": "john_doe@example.com", "telephone": "0551234567", "password": "strongpass123"})
+    response = client.post(
+        "/auth/signup",
+        json={
+            "first_name": "John",
+            "middle_name": "A",
+            "last_name": "Doe",
+            "email": "john_doe@example.com",
+            "telephone": "0551234567",
+            "password": "strongpass123",
+        },
+    )
     assert response.status_code in [200, 201]
     data = response.json()
     assert data["first_name"] == "John"
@@ -16,7 +26,17 @@ def test_signup_success(client):
 def test_signup_existing_email(client, create_customer):
     email = f"existing_{uuid.uuid4().hex[:6]}@example.com"
     create_customer(email=email)
-    response = client.post("/auth/signup", json={"first_name": "Jane", "middle_name": "B", "last_name": "Smith", "email": email, "telephone": "0557654321", "password": "anotherpass123"})
+    response = client.post(
+        "/auth/signup",
+        json={
+            "first_name": "Jane",
+            "middle_name": "B",
+            "last_name": "Smith",
+            "email": email,
+            "telephone": "0557654321",
+            "password": "anotherpass123",
+        },
+    )
     # Expecting a 400 or 409 depending on your API handling
     assert response.status_code in [400, 409]
 
@@ -42,5 +62,8 @@ def test_login_wrong_password(client, create_customer):
 
 
 def test_login_nonexistent_user(client):
-    response = client.post("/auth/login", data={"email": "nonexistent@example.com", "password": "nopass123"})
+    response = client.post(
+        "/auth/login",
+        data={"email": "nonexistent@example.com", "password": "nopass123"},
+    )
     assert response.status_code == 401

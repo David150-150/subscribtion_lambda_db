@@ -15,7 +15,12 @@ def create_customer(db: Session, customer: schemas.CustomerCreate) -> Customer:
     """
     hashed = hash_password(customer.password)
     new_customer = models.Customer(
-        first_name=customer.first_name, middle_name=customer.middle_name, last_name=customer.last_name, email=customer.email, telephone=customer.telephone, hashed_password=hashed
+        first_name=customer.first_name,
+        middle_name=customer.middle_name,
+        last_name=customer.last_name,
+        email=customer.email,
+        telephone=customer.telephone,
+        hashed_password=hashed,
     )
     db.add(new_customer)
     db.commit()

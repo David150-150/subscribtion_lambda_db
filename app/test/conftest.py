@@ -128,7 +128,11 @@ def create_subscription(client, create_customer, create_product):
         product_id = create_product()
         response = client.post(
             "/subscription/",
-            json={"customer_id": customer_id, "product_id": product_id, "status": status},
+            json={
+                "customer_id": customer_id,
+                "product_id": product_id,
+                "status": status,
+            },
         )
         return response.json()["subscription_id"]
 
@@ -182,7 +186,11 @@ def create_schedule(client, create_subscription):
         subscription_id = create_subscription()
         response = client.post(
             "/schedule/",
-            json={"subscription_id": subscription_id, "task_name": task_name, "status": status},
+            json={
+                "subscription_id": subscription_id,
+                "task_name": task_name,
+                "status": status,
+            },
         )
         return response.json()["schedule_id"]
 
@@ -194,7 +202,13 @@ def create_schedule(client, create_subscription):
 def create_invalid_customer(client):
     """Attempts to create a customer with invalid data."""
 
-    def _create_invalid_customer(first_name="", last_name="", email="not-an-email", telephone="abc", password="123"):
+    def _create_invalid_customer(
+        first_name="",
+        last_name="",
+        email="not-an-email",
+        telephone="abc",
+        password="123",
+    ):
         response = client.post(
             "/customer/",
             json={

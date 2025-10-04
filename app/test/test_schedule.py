@@ -5,7 +5,14 @@ import pytest
 
 def test_create_schedule_success(client, create_subscription):
     subscription_id = create_subscription()
-    response = client.post("/schedule/", json={"subscription_id": subscription_id, "task_name": "Test Task", "status": "pending"})
+    response = client.post(
+        "/schedule/",
+        json={
+            "subscription_id": subscription_id,
+            "task_name": "Test Task",
+            "status": "pending",
+        },
+    )
     assert response.status_code in [200, 201]
     data = response.json()
     assert data["task_name"] == "Test Task"
@@ -15,7 +22,14 @@ def test_create_schedule_success(client, create_subscription):
 
 def test_create_schedule_invalid_status(client, create_subscription):
     subscription_id = create_subscription()
-    response = client.post("/schedule/", json={"subscription_id": subscription_id, "task_name": "Invalid Task", "status": "wrong_status"})
+    response = client.post(
+        "/schedule/",
+        json={
+            "subscription_id": subscription_id,
+            "task_name": "Invalid Task",
+            "status": "wrong_status",
+        },
+    )
     assert response.status_code == 422  # validation error
 
 

@@ -32,7 +32,11 @@ def read_customer(customer_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{customer_id}", response_model=schemas.CustomerOut)
-def update_customer(customer_id: int, customer_data: schemas.CustomerUpdate, db: Session = Depends(get_db)):
+def update_customer(
+    customer_id: int,
+    customer_data: schemas.CustomerUpdate,
+    db: Session = Depends(get_db),
+):
     updated_customer = crud.customer.update_customer(db, customer_id, customer_data)
     if not updated_customer:
         raise HTTPException(status_code=404, detail="Updated customer not found")

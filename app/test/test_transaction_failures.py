@@ -5,7 +5,10 @@ import pytest
 
 def test_create_transaction_failure_success(client, create_transaction):
     transaction_id = create_transaction()
-    response = client.post("/transaction_failures/", json={"transaction_id": transaction_id, "failure_reason": "Card declined"})
+    response = client.post(
+        "/transaction_failures/",
+        json={"transaction_id": transaction_id, "failure_reason": "Card declined"},
+    )
     assert response.status_code in [200, 201]
     data = response.json()
     assert data["transaction_id"] == transaction_id

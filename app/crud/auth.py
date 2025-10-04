@@ -14,7 +14,14 @@ def register_customer(db: Session, customer: CustomerCreate):
         raise HTTPException(status_code=409, detail="Email already registered")
 
     hashed = hash_password(customer.password)
-    new_customer = Customer(first_name=customer.first_name, middle_name=customer.middle_name, last_name=customer.last_name, email=customer.email, telephone=customer.telephone, hashed_password=hashed)
+    new_customer = Customer(
+        first_name=customer.first_name,
+        middle_name=customer.middle_name,
+        last_name=customer.last_name,
+        email=customer.email,
+        telephone=customer.telephone,
+        hashed_password=hashed,
+    )
     db.add(new_customer)
     db.commit()
     db.refresh(new_customer)

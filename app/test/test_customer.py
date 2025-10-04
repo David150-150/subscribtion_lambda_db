@@ -4,7 +4,15 @@ import pytest
 
 def test_create_customer_success(client):
     response = client.post(
-        "/customer/", json={"first_name": "Alice", "middle_name": "", "last_name": "Smith", "email": "alice_test@example.com", "telephone": "0551234567", "password": "strongpass123"}
+        "/customer/",
+        json={
+            "first_name": "Alice",
+            "middle_name": "",
+            "last_name": "Smith",
+            "email": "alice_test@example.com",
+            "telephone": "0551234567",
+            "password": "strongpass123",
+        },
     )
     assert response.status_code in [200, 201]
     data = response.json()
@@ -38,7 +46,10 @@ def test_get_all_customers(client, create_customer):
 
 def test_update_customer_success(client, create_customer):
     customer_id = create_customer()
-    response = client.put(f"/customer/{customer_id}", json={"first_name": "Updated", "email": "updated_test@example.com"})
+    response = client.put(
+        f"/customer/{customer_id}",
+        json={"first_name": "Updated", "email": "updated_test@example.com"},
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["first_name"] == "Updated"
