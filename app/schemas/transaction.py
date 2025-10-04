@@ -1,8 +1,7 @@
+# flake8: noqa: F401
 from datetime import datetime
 
 from pydantic import BaseModel
-
-# ---------------CREATED TRANSACTION SCHEMA----------#
 
 
 class TransactionBase(BaseModel):
@@ -11,6 +10,10 @@ class TransactionBase(BaseModel):
 
 class TransactionCreate(TransactionBase):
     pass
+
+
+class TransactionUpdate(BaseModel):
+    subscription_id: int | None = None
 
 
 class TransactionOut(TransactionBase):

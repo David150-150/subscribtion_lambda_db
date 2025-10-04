@@ -1,30 +1,27 @@
-# app/crud/auth.py
-from typing import Optional
-
+# flake8: noqa: F401
+from fastapi import HTTPException  # <-- import at the top
 from sqlalchemy.orm import Session
 
-from app import models, schemas
 from app.models import Customer
-
-# from app.utils import hash_password, verify_password
+from app.schemas import CustomerCreate
 from app.utils.password import hash_password, verify_password
 
 
-def register_customer(db: Session, customer: schemas.CustomerCreate) -> Customer:
-    customer_data = customer.dict()
+def register_customer(db: Session, customer: CustomerCreate):
+    # Check if email already exists
+    existing = db.query(Customer).filter(Customer.email == customer.email).first()
+    if existing:
+        raise HTTPException(status_code=409, detail="Email already registered")
 
-    # Extract plain password, hash it, and remove the original
-    plain_password = customer_data.pop("password")
-    customer_data["hashed_password"] = hash_password(plain_password)
-
-    new_customer = models.Customer(**customer_data)
+    hashed = hash_password(customer.password)
+    new_customer = Customer(first_name=customer.first_name, middle_name=customer.middle_name, last_name=customer.last_name, email=customer.email, telephone=customer.telephone, hashed_password=hashed)
     db.add(new_customer)
     db.commit()
     db.refresh(new_customer)
     return new_customer
 
 
-def authenticate_user(db: Session, email: str, password: str) -> Optional[Customer]:
+def authenticate_user(db: Session, email: str, password: str):
     user = db.query(Customer).filter(Customer.email == email).first()
     if user and verify_password(password, user.hashed_password):
         return user

@@ -1,10 +1,11 @@
+# flake8: noqa: F401
 from sqlalchemy import TIMESTAMP, Column, Enum, ForeignKey, Integer
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.db import Base
 
 
-# ---------------CREATE SUBSCRIPTION TABLE-------------#
 class Subscription(Base):
     __tablename__ = "subscription"
 
@@ -18,3 +19,8 @@ class Subscription(Base):
     )
     subscribed_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    # Add this relationship:
+    transactions = relationship("Transaction", backref="subscription", cascade="all, delete")
+
+    schedules = relationship("Schedule", backref="subscription", cascade="all, delete")

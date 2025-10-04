@@ -1,39 +1,243 @@
 lambda_db/
-├── app/
-│   ├── __init__.py
-│   ├── main.py                   # FastAPI entrypoint
-│   ├── db.py                     # SQLAlchemy engine, session, Base
-│   ├── settings.py               # Environment variables & config
-│   ├── models/                   # SQLAlchemy models
-│   │   ├── __init__.py
-│   │   └── ...                   # individual model files
-│   ├── schemas/                  # Pydantic schemas
-│   │   ├── __init__.py
-│   │   └── ...
-│   ├── crud/                     # CRUD operations
-│   │   ├── __init__.py
-│   │   └── ...
-│   ├── routers/                  # FastAPI routers / endpoints
-│   │   ├── __init__.py
-│   │   ├── auth.py
-│   │   ├── customer.py
-│   │   ├── product.py
-│   │   ├── transaction.py
-│   │   ├── transaction_details.py
-│   │   ├── transaction_failure.py
-│   │   ├── schedule.py
-│   │   └── subscription.py
-│   ├── utils/                    # Utility functions
-│   │   ├── __init__.py
-│   │   └── lambda_func.py
-│   └── test/                     # Test cases
-│       ├── __init__.py
-│       └── ...
 │
-├── Dockerfile
-├── docker-compose.dev.yml
-├── docker-compose.prod.yml
-├── requirements.txt
-├── .env
-├── README.md
-└── project_srtucture.txt
+├── app/                              # Main app code
+│   ├── auth/                         # Authentication
+│   │   ├── __init__.py
+│   │   ├── jwt_handler.py            # JWT creation/validation
+│   │   └── password_handler.py       # Password hashing & verification
+│   │
+│   ├── crud/                         # CRUD database logic
+│   │   ├── __init__.py
+│   │   ├── customers.py              # CRUD for customers
+│   │   └── orders.py                 # CRUD for orders
+│   │
+│   ├── models/                       # SQLAlchemy models (DB tables)
+│   │   ├── __init__.py
+│   │   ├── customer.py
+│   │   └── order.py
+│   │
+│   ├── routers/                      # FastAPI endpoints
+│   │   ├── __init__.py
+│   │   ├── customers.py              # /customers endpoints
+│   │   └── orders.py                 # /orders endpoints
+│   │
+│   ├── schemas/                      # Pydantic schemas (validation)
+│   │   ├── __init__.py
+│   │   ├── customer.py
+│   │   └── order.py
+│   │
+│   ├── test/                         # Unit & integration tests
+│   │   ├── __init__.py
+│   │   ├── test_customers.py
+│   │   ├── test_orders.py
+│   │   └── test_auth.py
+│   │
+│   ├── utils/                        # Helpers & utilities
+│   │   ├── __init__.py
+│   │   ├── db_utils.py               # DB helper functions
+│   │   ├── security.py               # Security-related utils
+│   │   └── lambda_utils.py           # AWS Lambda helper functions
+│   │
+│   ├── create_tables.py              # Script to initialize DB
+│   ├── db.py                         # Database connection
+│   ├── main.py                       # FastAPI entrypoint
+│   └── settings.py                   # App settings/env configs
+│
+├── docker-compose.dev.yml            # Dev Docker config
+├── docker-compose.prod.yml           # Production Docker config
+├── Dockerfile                        # Docker image build
+├── requirements.txt                  # Python dependencies
+├── requirements-dev.txt              # Dev dependencies (testing, linting, etc.)
+├── README.md                         # Project documentation
+└── .github/workflows/ci.yml          # CI/CD pipeline (GitHub Actions)
+
+
+
+# Project: lambda_db — Full file-by-file structure
+
+> Generated from the `tree -L 3` output you provided. This document lists each folder and the files inside (3 levels deep), plus short descriptions and recommendations.
+
+---
+
+## Top-level
+
+* `app/` — main application package
+* `docker-compose.dev.yml` — development docker-compose file
+* `docker-compose.prod.yml` — production docker-compose file
+* `Dockerfile` — FastAPI service Dockerfile
+* `lambda_subscribtion/` — local Python virtual environment (should be gitignored)
+
+  * `bin/` (contains many executables like `activate`, `pytest`, `uvicorn`, `pip`, etc.)
+  * `include/`
+  * `lib/` (python packages)
+  * `lib64` -> `lib`
+  * `pyvenv.cfg`
+* `project_srtucture.txt` (note: typo in filename)
+* `README.md`
+* `requirements-dev.txt`
+* `requirements.txt`
+
+---
+
+## `app/` (detailed)
+
+### `app/auth/`
+
+* `auth.bearer.py`
+* `auth_handler.py`
+* `__init__.py`
+* `__pycache__/` (compiled files)
+
+**Purpose:** authentication helpers, token/bearer logic
+
+---
+
+### `app/crud/`
+
+* `auth.py`
+* `customer.py`
+* `__init__.py`
+* `product.py`
+* `__pycache__/`
+* `schedule.py`
+* `subscription.py`
+* `transaction_details.py`
+* `transaction_failures.py`
+* `transaction.py`
+
+**Purpose:** all database CRUD operations grouped by resource
+
+---
+
+### `app/models/`
+
+* `customer.py`
+* `__init__.py`
+* `product.py`
+* `__pycache__/`
+* `schedule.py`
+* `subscription.py`
+* `transaction_details.py`
+* `transaction_failures.py`
+* `transaction.py`
+
+**Purpose:** SQLAlchemy model definitions for DB tables
+
+---
+
+### `app/routers/`
+
+* `auth.py`
+* `customer.py`
+* `__init__.py`
+* `product.py`
+* `__pycache__/`
+* `schedule.py`
+* `subscription.py`
+* `transaction_details.py`
+* `transaction_failure.py`  (note: file name singular/plural mismatch with models)
+* `transaction.py`
+
+**Purpose:** FastAPI route endpoints; note the `transaction_failure.py` naming vs `transaction_failures` model/CRUD — consistent naming helps
+
+---
+
+### `app/schemas/`
+
+* `auth.py`
+* `customer.py`
+* `__init__.py`
+* `product.py`
+* `__pycache__/`
+* `schedule.py`
+* `subscription.py`
+* `transaction_details.py`
+* `transaction_failures.py`
+* `transaction.py`
+
+**Purpose:** Pydantic schemas / request & response models
+
+---
+
+### `app/test/`
+
+* `conftest.py`
+* `__init__.py`
+* `__pycache__/`
+* `test_auth.py`
+* `test_customer.py`
+* `test_product.py`
+* `test_schedule.py`
+* `test_subscription.py`
+* `test_transaction_details.py`
+* `test_transaction_failures.py`
+* `test_transaction.py`
+
+**Purpose:** pytest tests and fixtures (this is where your 53 passing tests live)
+
+---
+
+### Other files in `app/`
+
+* `create_tables.py` — helper to create DB tables
+* `db.py` — DB engine / session setup
+* `__init__.py`
+* `main.py` — FastAPI app entrypoint (includes routers, scheduler, etc.)
+* `settings.py` — config/env loading
+* `utils/` directory
+
+  * `__init__.py`
+  * `lambda_func.py`
+  * `password.py`
+  * `__pycache__/`
+
+---
+
+## `lambda_subscribtion/` (virtual environment)
+
+This folder contains your virtual environment files. Examples from `bin/`:
+
+* `activate`, `activate.csh`, `activate.fish`, `Activate.ps1`
+* CLI tools created in the venv: `pytest`, `pip`, `uvicorn`, `fastapi`, `httpx`, `flake8`, `black`, etc.
+
+**Recommendation:** Do not commit this folder to git. Add `lambda_subscribtion/` to `.gitignore` and remove it from the repository if present.
+
+---
+
+## Files you may want to review / fix
+
+* `project_srtucture.txt` — typo: consider renaming to `project_structure.txt` or `docs/project_structure.md` (you asked me to create one).
+* `app/routers/transaction_failure.py` vs `app/crud/transaction_failures.py` and `app/models/transaction_failures.py` — consider unifying naming (either `transaction_failure` singular everywhere, or `transaction_failures` everywhere) to avoid confusion and routing mistakes.
+* Many `__pycache__` folders and `.pyc` files — these should be ignored by `.gitignore`.
+
+---
+
+## Suggested `.gitignore` additions
+
+```
+# Virtual environments
+lambda_subscribtion/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Environment files (if you have secrets)
+.env
+
+# IDE / editor
+.vscode/
+.idea/
+```
+
+---
+
+## Suggested next steps I can do for you
+
+* Create `docs/project_structure.md` (or overwrite it) in the repo with this content ready to commit.
+* Generate a `.gitignore` file with the recommended entries (and optionally remove the committed `lambda_subscribtion/`).
+* Fix naming inconsistencies across routers/models/CRUD (I can suggest a refactor plan).
+
+---
+
+If you want, I’ll add this file as `docs/project_structure.md` in the canvas and prepare a ready-to-commit `.gitignore`. Which would you like me to do?

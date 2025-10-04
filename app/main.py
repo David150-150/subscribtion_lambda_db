@@ -10,8 +10,6 @@ from fastapi.responses import JSONResponse
 from app import models
 from app.db import engine
 from app.routers.auth import router as auth_router
-
-# Routers
 from app.routers.customer import router as customer_router
 from app.routers.product import router as product_router
 from app.routers.schedule import router as schedule_router
@@ -22,6 +20,9 @@ from app.routers.transaction_failure import router as transaction_failures_route
 
 # Lambda simulation
 from app.utils.lambda_func import lambda_handler
+
+# Routers
+
 
 # ---------------- Initialize the app ---------------- #
 app = FastAPI(
@@ -50,9 +51,10 @@ app.include_router(product_router, prefix="/product", tags=["Product"])
 app.include_router(transaction_router, prefix="/transaction", tags=["Transaction"])
 app.include_router(
     transaction_details_router,
-    prefix="/transaction_details",
+    prefix="/transaction-detail",  # ✅ change to hyphen and singular
     tags=["Transaction Details"],
 )
+
 app.include_router(
     transaction_failures_router,
     prefix="/transaction_failures",

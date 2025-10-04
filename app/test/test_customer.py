@@ -1,60 +1,62 @@
 # flake8: noqa: F401,F841,E501
-
-# tests/test_customer.py
 import pytest
 
 
-def test_create_customer(client):
-    response = client.post("/customer/", json={"name": "Ama Budu", "email": "Budu@gmail.com"})
-
-    assert response.status_code == 200
-    assert response.json()["name"] == "Ama Budu"
-    assert "customer_id" in response.json()
-
-
-def test_get_customers(client):
-    response = client.get("/customer/")
-    assert response.status_code == 200
-    assert isinstance(response.json(), list)
+def test_create_customer_success(client):
+    response = client.post(
+        "/customer/", json={"first_name": "Alice", "middle_name": "", "last_name": "Smith", "email": "alice_test@example.com", "telephone": "0551234567", "password": "strongpass123"}
+    )
+    assert response.status_code in [200, 201]
+    data = response.json()
+    assert data["first_name"] == "Alice"
+    assert "customer_id" in data
+    assert "password" not in data
 
 
-def test_get_customer(client):
-    # First, create a customer
-    create = client.post("/customer/", json={"name": "Ama Buudu", "email": "Buudu@gmail.com"})
-
-    customer_id = create.json()["customer_id"]
-
-    # Now get that customer
+def test_get_customer_success(client, create_customer):
+    customer_id = create_customer()
     response = client.get(f"/customer/{customer_id}")
     assert response.status_code == 200
-    assert response.json()["name"] == "Ama Buudu"
-    assert response.json()["email"] == "Buudu@gmail.com"
+    data = response.json()
+    assert data["customer_id"] == customer_id
 
 
-def test_update_customer(client):
-    create = client.post("/customer/", json={"name": "Ama Moom", "email": "Moom@gmail.com"})
+def test_get_customer_not_found(client):
+    response = client.get("/customer/999999")
+    assert response.status_code == 404
 
-    customer_id = create.json()["customer_id"]
-    response = client.put(
-        f"/customer/{customer_id}",
-        json={"name": "Kuku Bonsu", "email": "kuku@gmail.com"},
-    )
 
+def test_get_all_customers(client, create_customer):
+    create_customer()
+    create_customer()
+    response = client.get("/customer/")
     assert response.status_code == 200
-    assert response.json()["name"] == "Kuku Bonsu"
-    assert response.json()["email"] == "kuku@gmail.com"
-    # Cleanup: delete test customer
-    client.delete(f"/customer/{customer_id}")
+    data = response.json()
+    assert isinstance(data, list)
+    assert len(data) >= 2
 
 
-def test_delete_customer(client):
-    create = client.post("/customer/", json={"name": "Kuku Bonsu", "email": "Bonsu@gmail.com"})
+def test_update_customer_success(client, create_customer):
+    customer_id = create_customer()
+    response = client.put(f"/customer/{customer_id}", json={"first_name": "Updated", "email": "updated_test@example.com"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["first_name"] == "Updated"
 
-    customer_id = create.json()["customer_id"]
 
+def test_update_customer_not_found(client):
+    response = client.put("/customer/999999", json={"first_name": "Nobody"})
+    assert response.status_code == 404
+
+
+def test_delete_customer_success(client, create_customer):
+    customer_id = create_customer()
     response = client.delete(f"/customer/{customer_id}")
     assert response.status_code == 200
-
-    # Confirm deletion
     follow_up = client.get(f"/customer/{customer_id}")
     assert follow_up.status_code == 404
+
+
+def test_delete_customer_not_found(client):
+    response = client.delete("/customer/999999")
+    assert response.status_code == 404

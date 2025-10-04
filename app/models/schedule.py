@@ -1,3 +1,4 @@
+# flake8: noqa: F401
 from sqlalchemy import TIMESTAMP, Column, Date, Enum, ForeignKey, Integer, String
 from sqlalchemy.sql import func
 

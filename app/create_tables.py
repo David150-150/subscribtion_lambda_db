@@ -1,6 +1,4 @@
 # flake8: noqa: F401,F841
-
-
 # app/create_tables.py
 import sys
 

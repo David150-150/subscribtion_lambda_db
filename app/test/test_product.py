@@ -1,88 +1,65 @@
 # flake8: noqa: F401,F841,E501
-
-# tests/test_product.py
 import pytest
 
 
-def test_create_product(client):
+def test_create_product_success(client):
     response = client.post(
         "/product/",
-        json={
-            "name": "Sports Plus",
-            "description": "This subscription comes with all your favorite channels",
-            "price": "250.68",
-        },
+        json={"name": "Basic Plan", "description": "Test product", "price": 100.0},
     )
-    assert response.status_code == 200
-    assert response.json()["name"] == "Sports Plus"
-    assert "product_id" in response.json()
+    assert response.status_code in [200, 201]
+    data = response.json()
+    assert data["name"] == "Basic Plan"
+    assert "product_id" in data
 
 
-def test_get_products(client):
-    response = client.get("/product/")
-    assert response.status_code == 200
-    assert isinstance(response.json(), list)
-
-
-def test_get_product(client):
-    # First, create a product
-    create = client.post(
-        "/product/",
-        json={
-            "name": "Boss Plan",
-            "description": "The Boss package",
-            "price": "300.00",
-        },
-    )
-    assert create.status_code == 200
-    product_id = create.json()["product_id"]
-
-    # Now fetch it
+def test_get_product_success(client, create_product):
+    product_id = create_product()
     response = client.get(f"/product/{product_id}")
     assert response.status_code == 200
-    assert response.json()["name"] == "Boss Plan"
+    data = response.json()
+    assert data["product_id"] == product_id
 
 
-def test_update_product(client):
-    # Create product to update
-    create = client.post(
-        "/product/",
-        json={
-            "name": "Mid Boss",
-            "description": "Initial Description",
-            "price": "99.99",
-        },
-    )
-    product_id = create.json()["product_id"]
+def test_get_product_not_found(client):
+    response = client.get("/product/999999")
+    assert response.status_code == 404
 
-    # Update it
+
+def test_get_all_products(client, create_product):
+    create_product()
+    create_product()
+    response = client.get("/product/")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    assert len(data) >= 2
+
+
+def test_update_product_success(client, create_product):
+    product_id = create_product()
     response = client.put(
         f"/product/{product_id}",
-        json={
-            "name": "Boss Package",
-            "description": "This is a mega pack",
-            "price": "199.99",
-        },
+        json={"name": "Updated Product", "description": "Updated", "price": 199.99},
     )
     assert response.status_code == 200
-    assert response.json()["name"] == "Boss Package"
+    data = response.json()
+    assert data["name"] == "Updated Product"
 
 
-def test_delete_product(client):
-    create = client.post(
-        "/product/",
-        json={
-            "name": "Big Package",
-            "description": "This is a mega pack",
-            "price": "199.99",
-        },
-    )
+def test_update_product_not_found(client):
+    response = client.put("/product/999999", json={"name": "Nobody"})
+    assert response.status_code == 404
 
-    product_id = create.json()["product_id"]
 
+def test_delete_product_success(client, create_product):
+    product_id = create_product()
     response = client.delete(f"/product/{product_id}")
     assert response.status_code == 200
-
-    # Confirm deletion
     follow_up = client.get(f"/product/{product_id}")
     assert follow_up.status_code == 404
+
+
+def test_delete_product_not_found(client):
+    response = client.delete("/product/999999")
+    assert response.status_code == 404

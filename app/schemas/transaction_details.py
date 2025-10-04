@@ -1,3 +1,4 @@
+# flake8: noqa: F401
 from typing import Literal, Optional
 
 from pydantic import BaseModel

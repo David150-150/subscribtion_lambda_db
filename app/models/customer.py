@@ -1,5 +1,4 @@
 # flake8: noqa: F401
-
 # app/models.py
 from datetime import datetime
 

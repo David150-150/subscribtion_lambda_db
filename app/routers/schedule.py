@@ -1,3 +1,4 @@
+# flake8: noqa: F401
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -10,8 +11,8 @@ router = APIRouter()
 
 
 # ------------CREATED ALL SCHEDULE ROUTES--------------#
-@router.post("/", response_model=schemas.ScheduleOut)
-def create_schema(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
+@router.post("/", response_model=schemas.ScheduleOut, status_code=201)
+def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
     return crud.schedule.create_schedule(db, schedule)
 
 

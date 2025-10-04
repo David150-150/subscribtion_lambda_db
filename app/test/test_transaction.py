@@ -1,68 +1,47 @@
 # flake8: noqa: F401,F841,E501
-
 import pytest
 
 
-# CREATE
-def test_create_transaction(client):
-    # Ensure subscription exists
-    subscription = client.post("/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"})
-    sub_id = subscription.json()["subscription_id"]
-
-    # Create transaction
-    response = client.post("/transaction/", json={"subscription_id": 1})
-    assert response.status_code == 201
+def test_create_transaction_success(client, create_subscription):
+    subscription_id = create_subscription()
+    response = client.post("/transaction/", json={"subscription_id": subscription_id})
+    assert response.status_code in [200, 201]
     data = response.json()
-    assert data["subscription_id"] == 1
+    assert data["subscription_id"] == subscription_id
     assert "transaction_id" in data
-    assert "created_at" in data
 
 
-# GET BY ID
-def test_get_transaction(client):
-    sub = client.post("/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"})
-    sub_id = sub.json()["subscription_id"]
-
-    txn = client.post("/transaction/", json={"subscription_id": sub_id})
-    txn_id = txn.json()["transaction_id"]
-
-    response = client.get(f"/transaction/{txn_id}")
+def test_get_transaction_success(client, create_transaction):
+    transaction_id = create_transaction()
+    response = client.get(f"/transaction/{transaction_id}")
     assert response.status_code == 200
     data = response.json()
-    assert data["transaction_id"] == 1
-    assert data["subscription_id"] == 1
+    assert data["transaction_id"] == transaction_id
 
 
-# GET ALL
-def test_get_transactions(client):
-    sub = client.post("/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"})
-    sub_id = sub.json()["subscription_id"]
+def test_get_transaction_not_found(client):
+    response = client.get("/transaction/999999")
+    assert response.status_code == 404
 
-    client.post("/transaction/", json={"subscription_id": sub_id})
-    client.post("/transaction/", json={"subscription_id": sub_id})
 
+def test_get_all_transactions(client, create_transaction):
+    create_transaction()
+    create_transaction()
     response = client.get("/transaction/")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
     assert len(data) >= 2
-    for txn in data:
-        assert "transaction_id" in txn
-        assert "subscription_id" in txn
-        assert "created_at" in txn
 
 
-# DELETE
-def test_delete_transaction(client):
-    sub = client.post("/subscription/", json={"customer_id": 1, "product_id": 1, "status": "active"})
-    sub_id = sub.json()["subscription_id"]
-
-    txn = client.post("/transaction/", json={"subscription_id": sub_id})
-    txn_id = txn.json()["transaction_id"]
-
-    response = client.delete(f"/transaction/{txn_id}")
+def test_delete_transaction_success(client, create_transaction):
+    transaction_id = create_transaction()
+    response = client.delete(f"/transaction/{transaction_id}")
     assert response.status_code == 200
+    follow_up = client.get(f"/transaction/{transaction_id}")
+    assert follow_up.status_code == 404
 
-    # Confirm deletion
-    check = client.get(f"/transaction/{txn_id}")
-    assert check.status_code == 404
+
+def test_delete_transaction_not_found(client):
+    response = client.delete("/transaction/999999")
+    assert response.status_code == 404

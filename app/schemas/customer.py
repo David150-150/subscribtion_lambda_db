@@ -1,20 +1,18 @@
 # flake8: noqa: F401
-
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, constr
 
 # ---------------CREATED CUSTOMER SCHEMA----------#
 
 
 class CustomerBase(BaseModel):
     first_name: str
-    middle_name: Optional[str] = None
+    middle_name: Optional[str] = None  # str | None = ""
     last_name: str
     email: EmailStr
     telephone: str
-    # password: str
 
 
 class CustomerCreate(CustomerBase):

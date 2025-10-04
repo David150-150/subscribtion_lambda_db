@@ -1,5 +1,4 @@
 # flake8: noqa: F401
-
 from typing import Optional
 
 from sqlalchemy.orm import Session

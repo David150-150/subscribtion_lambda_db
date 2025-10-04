@@ -1,5 +1,4 @@
 # flake8: noqa: F401
-
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
@@ -29,11 +28,12 @@ def get_product(db: Session, product_id: int) -> Optional[Product]:
 
 
 # -----------------UPDATE PRODUCT------------#
-def update_product(db: Session, product_id: int, product_data: schemas.ProductCreate) -> Optional[Product]:
+def update_product(db: Session, product_id: int, product_data: schemas.ProductUpdate) -> Optional[Product]:
     product = db.query(Product).filter(Product.product_id == product_id).first()
     if not product:
         return None
 
+    # Only update fields that were provided
     for key, value in product_data.dict(exclude_unset=True).items():
         setattr(product, key, value)
 

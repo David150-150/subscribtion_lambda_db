@@ -1,3 +1,4 @@
+# flake8: noqa: F401
 from typing import List, Optional
 
 from sqlalchemy.orm import Session

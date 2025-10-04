@@ -1,3 +1,4 @@
+# flake8: noqa: F401
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -5,12 +6,13 @@ from sqlalchemy.orm import Session
 
 from app import crud, schemas
 from app.db import get_db
+from app.schemas.subscription import SubscriptionUpdate
 
 router = APIRouter()
 
 
 # ---------------CREATED ALL SUBSCRIPTION ROUTES----------------#
-@router.post("/", response_model=schemas.SubscriptionOut)
+@router.post("/", response_model=schemas.SubscriptionOut, status_code=201)
 def create(subscription: schemas.SubscriptionCreate, db: Session = Depends(get_db)):
     return crud.subscription.create_subscription(db, subscription)
 
@@ -34,7 +36,7 @@ def read_subscription(subscription_id: int, db: Session = Depends(get_db)):
 @router.put("/{subscription_id}", response_model=schemas.SubscriptionOut)
 def update_subscription(
     subscription_id: int,
-    subscription_data: schemas.SubscriptionCreate,
+    subscription_data: SubscriptionUpdate,  # <- use update schema
     db: Session = Depends(get_db),
 ):
     subscription = crud.subscription.update_subscription(db, subscription_id, subscription_data)

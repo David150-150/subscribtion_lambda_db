@@ -1,3 +1,4 @@
+# flake8: noqa: F401
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -10,7 +11,7 @@ router = APIRouter()
 
 
 # --------------CREATED ALL TRANSACTION DETAIL ROUTES-------------#
-@router.post("/", response_model=schemas.Transaction_Detail_Out)
+@router.post("/", response_model=schemas.Transaction_Detail_Out, status_code=201)
 def create_transaction_details(transaction_details: schemas.Transaction_Detail_Base, db: Session = Depends(get_db)):
     return crud.transaction_details.transaction_detail_create(db, transaction_details)
 
