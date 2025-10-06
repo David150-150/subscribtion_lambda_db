@@ -23,7 +23,7 @@ jobs:
           pip install -r requirements-dev.txt
           pip install pre-commit
 
-      - name: Run pre-commit hooks (Black, isort, Flake8)
+      - name: Run pre-commit hooks
         run: pre-commit run --all-files
 
   test:
@@ -64,10 +64,8 @@ jobs:
 
       - name: Wait for MySQL to be ready
         run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-client
           echo "Waiting for MySQL service..."
-          for i in {1..60}; do
+          for i in {1..30}; do
             if mysqladmin ping -h db -uroot -p${{ secrets.DB_PASSWORD }} --silent; then
               echo "MySQL is ready!"
               break
@@ -75,10 +73,11 @@ jobs:
             echo "Waiting..."
             sleep 2
           done
-          echo "MySQL should be ready now!"
+          sleep 5  # extra delay to ensure full readiness
 
       - name: Debug MySQL connection
-        run: mysql -h db -uroot -p${{ secrets.DB_PASSWORD }} -e "SHOW DATABASES;"
+        run: |
+          mysql -h db -uroot -p${{ secrets.DB_PASSWORD }} -e "SHOW DATABASES;"
 
       - name: Create tables
         run: python -m app.create_tables
