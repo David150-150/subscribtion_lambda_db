@@ -18,29 +18,41 @@
 #     return pwd_context.verify(safe_password, hashed_password)
 
 
-# app/utils/password.py
+# # app/utils/password.py
+# from passlib.context import CryptContext
+
+# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# MAX_BCRYPT_LENGTH = 72  # bcrypt limit in bytes
+
+
+# def hash_password(password: str) -> str:
+#     """
+#     Hash the password safely using bcrypt.
+#     Truncate password to 72 characters to avoid bcrypt limit.
+#     """
+#     if len(password) > MAX_BCRYPT_LENGTH:
+#         # Optional: log a warning that password is truncated
+#         print(f"Warning: password truncated to {MAX_BCRYPT_LENGTH} characters for bcrypt")
+#     safe_password = password[:MAX_BCRYPT_LENGTH]
+#     return pwd_context.hash(safe_password)
+
+
+# def verify_password(plain_password: str, hashed_password: str) -> bool:
+#     """
+#     Verify the password against the hashed version.
+#     Truncate plain password to 72 characters to match bcrypt limit.
+#     """
+#     safe_password = plain_password[:MAX_BCRYPT_LENGTH]
+#     return pwd_context.verify(safe_password, hashed_password)
+
+
 from passlib.context import CryptContext
 
+from app.utils.password import safe_password
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-MAX_BCRYPT_LENGTH = 72  # bcrypt limit in bytes
 
 
 def hash_password(password: str) -> str:
-    """
-    Hash the password safely using bcrypt.
-    Truncate password to 72 characters to avoid bcrypt limit.
-    """
-    if len(password) > MAX_BCRYPT_LENGTH:
-        # Optional: log a warning that password is truncated
-        print(f"Warning: password truncated to {MAX_BCRYPT_LENGTH} characters for bcrypt")
-    safe_password = password[:MAX_BCRYPT_LENGTH]
-    return pwd_context.hash(safe_password)
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Verify the password against the hashed version.
-    Truncate plain password to 72 characters to match bcrypt limit.
-    """
-    safe_password = plain_password[:MAX_BCRYPT_LENGTH]
-    return pwd_context.verify(safe_password, hashed_password)
+    safe_pwd = safe_password(password)  # always truncate
+    return pwd_context.hash(safe_pwd)
