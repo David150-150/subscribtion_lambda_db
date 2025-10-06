@@ -27,6 +27,35 @@ load_dotenv()  # Load .env variables
 
 # settings = Settings()
 
+# import os
+
+# from dotenv import load_dotenv
+
+# load_dotenv()  # Load .env variables
+
+# class Settings:
+#     TESTING: bool = os.getenv("TESTING", "0") == "1"
+#     IN_DOCKER: bool = os.getenv("IN_DOCKER", "0") == "1"
+
+#     if TESTING:
+#         DATABASE_URL = os.getenv("TEST_DATABASE_URL")
+#     elif IN_DOCKER:
+#         DATABASE_URL = (
+#             f"mysql+mysqlconnector://{os.getenv('DOCKER_DB_USER')}:{os.getenv('DOCKER_DB_PASSWORD')}" f"@{os.getenv('DOCKER_DB_HOST')}:{os.getenv('DOCKER_DB_PORT')}/{os.getenv('DOCKER_DB_NAME')}"
+#         )
+#     else:
+#         DATABASE_URL = f"mysql+mysqlconnector://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}" f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+
+
+# settings = Settings()
+
+
+# import os
+
+# from dotenv import load_dotenv
+
+# load_dotenv()  # Load .env variables
+
 
 class Settings:
     TESTING: bool = os.getenv("TESTING", "0") == "1"
