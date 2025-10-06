@@ -12,6 +12,12 @@ from sqlalchemy.orm import sessionmaker
 from app.db import Base, get_db
 from app.main import app
 
+
+# Helper to safely truncate passwords to 72 bytes
+def safe_password(pwd: str) -> str:
+    return pwd.encode("utf-8")[:72].decode("utf-8", "ignore")
+
+
 load_dotenv()
 
 # ------------------Database setup------------------#
@@ -87,6 +93,9 @@ def create_customer(client):
     ):
         if email is None:
             email = f"test_{uuid.uuid4().hex[:6]}@example.com"
+
+        # Truncate password safely
+        password = safe_password(password)
 
         response = client.post(
             "/customer/",
