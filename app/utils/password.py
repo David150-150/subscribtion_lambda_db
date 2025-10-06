@@ -46,17 +46,20 @@
 #     return pwd_context.verify(safe_password, hashed_password)
 
 
-# app/utils/password.py
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-# put this first
 def safe_password(pwd: str) -> str:
     return pwd.encode("utf-8")[:72].decode("utf-8", "ignore")
 
 
 def hash_password(password: str) -> str:
-    safe_pwd = safe_password(password)  # always truncate
+    safe_pwd = safe_password(password)
     return pwd_context.hash(safe_pwd)
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    safe_pwd = safe_password(plain_password)
+    return pwd_context.verify(safe_pwd, hashed_password)
