@@ -66,12 +66,14 @@ jobs:
         run: |
           echo "Waiting for MySQL service..."
           for i in {1..60}; do
-            mysqladmin ping -h db -uroot -p${{ secrets.DB_PASSWORD }} --silent && break
+            if mysqladmin ping -h db -uroot -p${{ secrets.DB_PASSWORD }} --silent; then
+              echo "MySQL is ready!"
+              break
+            fi
             echo "Waiting..."
             sleep 2
           done
-          sleep 5
-          echo "MySQL should be ready now!"
+          sleep 5  # extra delay to ensure MySQL is fully ready
 
       - name: Debug MySQL connection
         run: |
@@ -79,8 +81,14 @@ jobs:
           sudo apt-get install -y mysql-client
           mysql -h db -uroot -p${{ secrets.DB_PASSWORD }} -e "SHOW DATABASES;"
 
-      - name: Create tables
-        run: python -m app.create_tables
+      - name: Create tables with retry
+        run: |
+          RETRIES=5
+          for i in $(seq 1 $RETRIES); do
+            python -m app.create_tables && break
+            echo "Retrying table creation ($i/$RETRIES)..."
+            sleep 3
+          done
 
       - name: Run tests
         run: pytest -v
