@@ -66,10 +66,7 @@ jobs:
         run: |
           echo "Waiting for MySQL service..."
           for i in {1..60}; do
-            if mysqladmin ping -h db -uroot -p${{ secrets.DB_PASSWORD }} --silent; then
-              echo "MySQL is ready!"
-              break
-            fi
+            mysqladmin ping -h db -uroot -p${{ secrets.DB_PASSWORD }} --silent && break
             echo "Waiting..."
             sleep 2
           done
