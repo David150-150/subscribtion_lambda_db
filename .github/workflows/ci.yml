@@ -1,3 +1,89 @@
+# name: CI
+
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+
+# jobs:
+#   lint:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: "3.11"
+
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements-dev.txt
+#           pip install pre-commit
+
+#       - name: Run pre-commit hooks (Black, isort, Flake8)
+#         run: pre-commit run --all-files
+
+#   test:
+#     runs-on: ubuntu-latest
+#     needs: lint
+#     services:
+#       mysql:
+#         image: mysql:8
+#         env:
+#           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#           MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+#         ports:
+#           - 3306:3306
+#         options: >-
+#           --health-cmd="mysqladmin ping --silent"
+#           --health-interval=10s
+#           --health-timeout=5s
+#           --health-retries=10
+
+#     env:
+#       TESTING: "1"
+#       IN_DOCKER: "1"
+#       TEST_DATABASE_URL: mysql+mysqlconnector://root:${{ secrets.DB_PASSWORD }}@mysql:3306/${{ secrets.DB_NAME }}
+#       PYTHONPATH: ${{ github.workspace }}
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: "3.11"
+
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements-dev.txt
+
+#       - name: Wait for MySQL to be ready
+#         run: |
+#           for i in {1..30}; do
+#             mysqladmin ping -hmysql -uroot -p${{ secrets.DB_PASSWORD }} && break
+#             echo "Waiting for MySQL..."
+#             sleep 2
+#           done
+#           # extra sleep to ensure full readiness
+#           sleep 5
+
+#       - name: Export TEST_DATABASE_URL
+#         run: echo "TEST_DATABASE_URL=${{ env.TEST_DATABASE_URL }}" >> $GITHUB_ENV
+
+#       - name: Create tables
+#         run: python -m app.create_tables
+
+#       - name: Run tests
+#         run: pytest -v
+
+
+
 name: CI
 
 on:
@@ -46,7 +132,7 @@ jobs:
     env:
       TESTING: "1"
       IN_DOCKER: "1"
-      TEST_DATABASE_URL: mysql+mysqlconnector://root:${{ secrets.DB_PASSWORD }}@mysql:3306/${{ secrets.DB_NAME }}
+      TEST_DATABASE_URL: mysql+mysqlconnector://root:${{ secrets.DB_PASSWORD }}@127.0.0.1:3306/${{ secrets.DB_NAME }}
       PYTHONPATH: ${{ github.workspace }}
 
     steps:
@@ -62,19 +148,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
+          pip install mysql-connector-python
 
       - name: Wait for MySQL to be ready
         run: |
           for i in {1..30}; do
-            mysqladmin ping -hmysql -uroot -p${{ secrets.DB_PASSWORD }} && break
+            mysqladmin ping -h127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} --protocol=TCP && break
             echo "Waiting for MySQL..."
             sleep 2
           done
-          # extra sleep to ensure full readiness
-          sleep 5
 
-      - name: Export TEST_DATABASE_URL
-        run: echo "TEST_DATABASE_URL=${{ env.TEST_DATABASE_URL }}" >> $GITHUB_ENV
+      - name: Debug MySQL connection
+        run: |
+          apt-get update && apt-get install -y mysql-client
+          mysql -h127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} -e "SHOW DATABASES;"
 
       - name: Create tables
         run: python -m app.create_tables
