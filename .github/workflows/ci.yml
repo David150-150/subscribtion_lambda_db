@@ -71,4 +71,4 @@ jobs:
       # 8️⃣ Tear down containers
       - name: Tear down containers
         if: always()
-        run: docker-compose -f docker-compose.dev.yml down
+        run: docker compose -f docker-compose.dev.yml down
