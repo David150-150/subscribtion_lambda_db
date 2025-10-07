@@ -6,103 +6,69 @@ on:
   pull_request:
 
 jobs:
-  lint:
+  build-and-test:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
-          pip install pre-commit
-
-      - name: Run pre-commit hooks (Black, isort, Flake8)
-        run: pre-commit run --all-files
-
-  test:
-    runs-on: ubuntu-latest
-    needs: lint
     services:
-      mysql:
-        image: mysql:8.0
+      db:
+        image: mysql:8
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
           MYSQL_DATABASE: ${{ secrets.DB_NAME }}
-        # Ports removed to avoid conflicts and unnecessary exposure
+          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+        ports:
+          - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h mysql -uroot -p${{ secrets.DB_PASSWORD }} --silent"
-          --health-interval=10s
-          --health-timeout=5s
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=5s
+          --health-timeout=3s
           --health-retries=10
 
-    env:
-      TESTING: "1"
-      IN_DOCKER: "1"
-      DOCKER_DB_HOST: mysql
-      DOCKER_DB_USER: root
-      DOCKER_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DOCKER_DB_NAME: ${{ secrets.DB_NAME }}
-      TEST_DATABASE_URL: mysql+mysqlconnector://root:${{ secrets.DB_PASSWORD }}@mysql:3306/${{ secrets.DB_NAME }}
-      PYTHONPATH: ${{ github.workspace }}
-
     steps:
+      # 1️⃣ Checkout repository
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
+      # 2️⃣ Install Docker Compose (if needed)
+      - name: Set up Docker Compose
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
-          pip install mysql-connector-python
+          docker compose version || sudo apt-get update && sudo apt-get install -y docker-compose
 
-      - name: Wait for MySQL to be ready
+      # 3️⃣ Build and start containers
+      - name: Build and start containers
+        run: docker-compose -f docker-compose.dev.yml up --build -d
+
+      # 4️⃣ Wait until MySQL is healthy
+      - name: Wait for MySQL
         run: |
-          echo "Waiting for MySQL service..."
-          for i in {1..60}; do
-            if mysqladmin ping -h mysql -uroot -p${{ secrets.DB_PASSWORD }} --silent; then
+          echo "Waiting for MySQL to be ready..."
+          for i in {1..20}; do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${{ github.job }}_db_1)
+            if [ "$STATUS" = "healthy" ]; then
               echo "MySQL is ready!"
               break
             fi
-            echo "Waiting..."
-            sleep 2
+            sleep 5
           done
-          sleep 5
 
-      - name: Debug environment info
+      # 5️⃣ Set TEST_DATABASE_URL inside the FastAPI container
+      - name: Export Test DB URL in container
         run: |
-          echo "---------------- Environment Variables ----------------"
-          echo "TESTING=$TESTING"
-          echo "IN_DOCKER=$IN_DOCKER"
-          echo "DOCKER_DB_HOST=$DOCKER_DB_HOST"
-          echo "DOCKER_DB_USER=$DOCKER_DB_USER"
-          echo "DOCKER_DB_PASSWORD=$DOCKER_DB_PASSWORD"
-          echo "DOCKER_DB_NAME=$DOCKER_DB_NAME"
-          echo "TEST_DATABASE_URL=$TEST_DATABASE_URL"
-          echo "-------------------------------------------------------"
-          echo "Python Path: $PYTHONPATH"
-          echo "Listing current directory contents:"
-          ls -la
+          docker-compose exec fastapi sh -c "export TEST_DATABASE_URL='mysql+mysqlconnector://root:${{ secrets.DB_ROOT_PASSWORD }}@db:3306/${{ secrets.DB_NAME }}' && echo \$TEST_DATABASE_URL"
 
-      - name: Debug database connection
+      # 6️⃣ Run lint checks inside the FastAPI container
+      - name: Run Lint Checks
         run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-client
-          mysql -h mysql -uroot -p${{ secrets.DB_PASSWORD }} -e "SHOW DATABASES;"
+          
+          docker-compose -f docker-compose.dev.yml exec fastapi flake8 . --config /app/.flake8
+          docker-compose -f docker-compose.dev.yml exec fastapi black --check .
+          docker-compose -f docker-compose.dev.yml exec fastapi isort . --check-only
 
-      - name: Create tables
-        run: python -m app.create_tables
+      # 7️⃣ Run tests inside the FastAPI container
+      - name: Run Tests
+        run: docker-compose exec fastapi sh -c "pytest -v"
 
-      - name: Run tests
-        run: pytest -v
+      # 8️⃣ Tear down containers
+      - name: Tear down containers
+        if: always()
+        run: docker-compose -f docker-compose.dev.yml down

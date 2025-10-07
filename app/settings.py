@@ -26,7 +26,10 @@ class Settings:
     DOCKER_DB_NAME = os.getenv("DOCKER_DB_NAME", "test_SubscribDB")
 
     # Testing / CI
-    TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", f"mysql+mysqlconnector://{DOCKER_DB_USER}:{DOCKER_DB_PASSWORD}@127.0.0.1:3306/{DOCKER_DB_NAME}")
+    TEST_DATABASE_URL = os.getenv(
+        "TEST_DATABASE_URL",
+        f"mysql+mysqlconnector://{DOCKER_DB_USER}:{DOCKER_DB_PASSWORD}@127.0.0.1:3306/{DOCKER_DB_NAME}",
+    )
 
     # Decide which URL to use
     if TESTING:

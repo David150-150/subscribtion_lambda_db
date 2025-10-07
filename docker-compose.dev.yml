@@ -23,17 +23,17 @@ services:
     container_name: lambda_mysql_dev
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: newpass123
-      MYSQL_DATABASE: test_SubscribDB
+      MYSQL_ROOT_PASSWORD:  ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE:  ${DB_NAME}
     ports:
       - "3307:3306"
     volumes:
       - db_data_dev:/var/lib/mysql
     healthcheck:                   # check if MySQL is ready
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pnewpass123"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "db", "-u", "root", "-p$DB_PASSWORD"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
 volumes:
   db_data_dev:
