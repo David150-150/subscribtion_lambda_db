@@ -1,3 +1,159 @@
+# # name: CI
+
+# # on:
+# #   push:
+# #     branches: [main]
+# #   pull_request:
+
+# # jobs:
+# #   build-and-test:
+# #     runs-on: ubuntu-latest
+
+# #     services:
+# #       db:
+# #         image: mysql:8
+# #         env:
+# #           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+# #           MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+# #           TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+# #         ports:
+# #           - 3306:3306
+# #         options: >-
+# #           --health-cmd="mysqladmin ping -h localhost"
+# #           --health-interval=5s
+# #           --health-timeout=3s
+# #           --health-retries=10
+
+# #     steps:
+# #       # 1️⃣ Checkout repository
+# #       - name: Checkout code
+# #         uses: actions/checkout@v4
+
+# #       # 2️⃣ Install Docker Compose (if needed)
+# #       - name: Set up Docker Compose
+# #         run: |
+# #           docker compose version || sudo apt-get update && sudo apt-get install -y docker-compose
+
+# #       # 3️⃣ Build and start containers
+# #       - name: Build and start containers
+# #         run: docker compose -f ./docker-compose.dev.yml up --build -d
+
+
+# #       # 4️⃣ Wait until MySQL is healthy
+# #       - name: Wait for MySQL
+# #         run: |
+# #           echo "Waiting for MySQL to be ready..."
+# #           for i in {1..20}; do
+# #             STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${{ github.job }}_db_1)
+# #             if [ "$STATUS" = "healthy" ]; then
+# #               echo "MySQL is ready!"
+# #               break
+# #             fi
+# #             sleep 5
+# #           done
+
+# #       # 5️⃣ Set TEST_DATABASE_URL inside the FastAPI container
+# #       - name: Export Test DB URL in container
+# #         run: |
+# #           docker compose -f ./docker-compose.dev.yml exec fastapi sh -c "export TEST_DATABASE_URL='mysql+mysqlconnector://root:${{ secrets.DB_ROOT_PASSWORD }}@db:3306/${{ secrets.DB_NAME }}' && echo \$TEST_DATABASE_URL"
+
+
+# #       # 6️⃣ Run lint checks inside the FastAPI container
+# #       - name: Run Lint Checks
+# #         run: |
+          
+# #           docker compose -f ./docker-compose.dev.yml exec fastapi flake8 . --config /app/.flake8
+# #           docker compose -f ./docker-compose.dev.yml exec fastapi black --check .
+# #           docker compose -f ./docker-compose.dev.yml exec fastapi isort . --check-only
+
+          
+# #       # 7️⃣ Run tests inside the FastAPI container
+# #       - name: Run Tests
+# #         run: docker compose -f ./docker-compose.dev.yml exec fastapi sh -c "pytest -v"
+
+# #       # 8️⃣ Tear down containers
+# #       - name: Tear down containers
+# #         if: always()
+# #         run: docker compose -f ./docker-compose.dev.yml down
+
+
+# name: CI
+
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+
+# jobs:
+#   build-and-test:
+#     runs-on: ubuntu-latest
+
+#     services:
+#       db:
+#         image: mysql:8
+#         env:
+#           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+#           MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+#         ports:
+#           - 3306:3306
+#         options: >-
+#           --health-cmd="mysqladmin ping -h localhost"
+#           --health-interval=5s
+#           --health-timeout=3s
+#           --health-retries=10
+
+#     steps:
+#       # 1️⃣ Checkout repository
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       # 2️⃣ Install Docker Compose (if needed)
+#       - name: Ensure Docker Compose is available
+#         run: docker compose version || sudo apt-get update && sudo apt-get install -y docker-compose
+
+#       # 3️⃣ Build and start containers
+#       - name: Build and start containers
+#         run: docker compose -f ./docker-compose.dev.yml up --build -d
+
+#       # 4️⃣ Wait until MySQL container is healthy
+#       - name: Wait for MySQL
+#         run: |
+#           echo "Waiting for MySQL to be ready..."
+#           for i in {1..20}; do
+#             STATUS=$(docker inspect --format='{{.State.Health.Status}}' lambda_mysql_dev)
+#             if [ "$STATUS" = "healthy" ]; then
+#               echo "MySQL is ready!"
+#               break
+#             fi
+#             sleep 5
+#           done
+
+#       # 5️⃣ Set TEST_DATABASE_URL inside FastAPI container (optional)
+#       - name: Export Test DB URL in container
+#         run: |
+#           docker compose -f ./docker-compose.dev.yml exec fastapi sh -c \
+#             "export TEST_DATABASE_URL='mysql+mysqlconnector://root:${{ secrets.DB_ROOT_PASSWORD }}@db:3306/${{ secrets.DB_NAME }}' && echo \$TEST_DATABASE_URL"
+
+#       # 6️⃣ Run lint checks inside FastAPI container
+#       - name: Run Lint Checks
+#         run: |
+#           docker compose -f ./docker-compose.dev.yml exec fastapi flake8 . --config /app/.flake8
+#           docker compose -f ./docker-compose.dev.yml exec fastapi black --check .
+#           docker compose -f ./docker-compose.dev.yml exec fastapi isort . --check-only
+
+#       # 7️⃣ Run tests inside FastAPI container
+#       - name: Run Tests
+#         run: docker compose -f ./docker-compose.dev.yml exec fastapi sh -c "pytest -v"
+
+#       # 8️⃣ Tear down containers
+#       - name: Tear down containers
+#         if: always()
+#         run: docker compose -f ./docker-compose.dev.yml down
+
+
+
+
+
 name: CI
 
 on:
@@ -15,7 +171,6 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
           MYSQL_DATABASE: ${{ secrets.DB_NAME }}
-          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
         ports:
           - 3306:3306
         options: >-
@@ -29,21 +184,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Install Docker Compose (if needed)
-      - name: Set up Docker Compose
-        run: |
-          docker compose version || sudo apt-get update && sudo apt-get install -y docker-compose
+      # 2️⃣ Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
 
-      # 3️⃣ Build and start containers
+      # 3️⃣ Cache pip packages
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # 4️⃣ Install dependencies
+      - name: Install dependencies
+        run: pip install --upgrade pip && pip install -r requirements.txt
+
+      # 5️⃣ Ensure Docker Compose is available
+      - name: Ensure Docker Compose
+        run: docker compose version || sudo apt-get update && sudo apt-get install -y docker-compose
+
+      # 6️⃣ Build and start containers
       - name: Build and start containers
-        run: docker-compose -f docker-compose.dev.yml up --build -d
+        run: docker compose -f ./docker-compose.dev.yml up --build -d
 
-      # 4️⃣ Wait until MySQL is healthy
+      # 7️⃣ Wait until MySQL container is healthy
       - name: Wait for MySQL
         run: |
           echo "Waiting for MySQL to be ready..."
           for i in {1..20}; do
-            STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${{ github.job }}_db_1)
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' lambda_mysql_dev)
             if [ "$STATUS" = "healthy" ]; then
               echo "MySQL is ready!"
               break
@@ -51,24 +224,18 @@ jobs:
             sleep 5
           done
 
-      # 5️⃣ Set TEST_DATABASE_URL inside the FastAPI container
-      - name: Export Test DB URL in container
-        run: |
-          docker-compose exec fastapi sh -c "export TEST_DATABASE_URL='mysql+mysqlconnector://root:${{ secrets.DB_ROOT_PASSWORD }}@db:3306/${{ secrets.DB_NAME }}' && echo \$TEST_DATABASE_URL"
-
-      # 6️⃣ Run lint checks inside the FastAPI container
+      # 8️⃣ Run lint checks inside FastAPI container
       - name: Run Lint Checks
         run: |
-          
-          docker-compose -f docker-compose.dev.yml exec fastapi flake8 . --config /app/.flake8
-          docker-compose -f docker-compose.dev.yml exec fastapi black --check .
-          docker-compose -f docker-compose.dev.yml exec fastapi isort . --check-only
+          docker compose -f ./docker-compose.dev.yml exec fastapi flake8 . --config /app/.flake8
+          docker compose -f ./docker-compose.dev.yml exec fastapi black --check .
+          docker compose -f ./docker-compose.dev.yml exec fastapi isort . --check-only
 
-      # 7️⃣ Run tests inside the FastAPI container
+      # 9️⃣ Run tests inside FastAPI container
       - name: Run Tests
-        run: docker-compose exec fastapi sh -c "pytest -v"
+        run: docker compose -f ./docker-compose.dev.yml exec fastapi sh -c "pytest -v"
 
-      # 8️⃣ Tear down containers
+      # 🔟 Tear down containers
       - name: Tear down containers
         if: always()
-        run: docker compose -f docker-compose.dev.yml down
+        run: docker compose -f ./docker-compose.dev.yml down
